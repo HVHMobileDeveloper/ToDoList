@@ -1,20 +1,37 @@
-import {SET_ADD_TODO} from '../../constant/variable';
+import {PRIORITY_HIGH, PRIORITY_MEDIUM, PRIORITY_LOW, PUSH_ADD_TODO} from '../../constant/variable';
 
-const INIT_STATE = {
-    todos: '',
+export type TodoObjectType = {
+    title: string,
+    priority: typeof PRIORITY_HIGH | typeof PRIORITY_MEDIUM | typeof PRIORITY_LOW,
+    dueTime: Date,
 }
 
-interface actionType {
+type PayloadType = {
+    todo: string,
+}
+
+interface InitStateType {
+    todos: Array<TodoObjectType>,
+}
+
+export interface ActionTodoType {
     type: string,
-    payload: any,
+    payload: PayloadType,
 }
 
-export default (state = INIT_STATE, action: actionType) => {
+const INIT_STATE : InitStateType  = {
+    todos: [],
+}
+
+export default (state = INIT_STATE, action: ActionTodoType) => {
     switch (action.type) {
-        case SET_ADD_TODO:
+        case PUSH_ADD_TODO:
+            const newTodos = [...state.todos, action.payload.todo];
             return {
                 ...state,
-                todos: action.payload.todos,
+                todos: newTodos.sort( (a: TodoObjectType, b: TodoObjectType) => {
+                    return b.priority - a.priority;
+                }),
             };
         default:
             return state;
